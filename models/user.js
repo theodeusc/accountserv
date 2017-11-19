@@ -18,6 +18,12 @@ const UserSchema = mongoose.Schema({
   },
   address: {
     type: String
+  },
+  hasRoles: {
+    type: [String],
+    default: [
+      "isCustomer",
+      "notApproved"]
   }
 });
 
@@ -32,6 +38,18 @@ module.exports.getUserByEmail = function(email, callback){
   User.findOne(query, callback);
 }
 
+module.exports.updateUserById = function(user, callback){
+  User.findByIdAndUpdate({_id: user._id}, user, (err, newUser) => {
+    if(err) throw err;
+    User.findOne({_id: user.id}, callback);
+  });
+}
+
+module.exports.getAllCustomers = function(isCustomer, callback){
+  const query = {hasRoles:{$in: isCustomer}};
+  User.find(query, callback);
+}
+
 module.exports.addUser = function(newUser, callback){
   bcrypt.genSalt(10, (err, salt) => {
     bcrypt.hash(newUser.password, salt, (err, hash) => {
@@ -40,6 +58,23 @@ module.exports.addUser = function(newUser, callback){
       newUser.save(callback);
     });
   });
+}
+
+module.exports.cleanArray = function(users, callback){
+
+  var cleanUsers = [];
+  for(var i = 0; i < users.length; i++){
+
+    cleanUsers.push({
+          id: users[i]._id,
+          name: users[i].name,
+          email: users[i].email,
+          address: users[i].address,
+          hasRoles: users[i].hasRoles
+        });
+  }
+
+  callback(null, cleanUsers);
 }
 
 module.exports.comparePassword = function(candidatePassword, hash, callback){

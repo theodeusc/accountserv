@@ -22,13 +22,13 @@ router.post('/register', (req, res, next) => {
     if(!user){
       User.addUser(newUser, (err, user) =>{
         if(err){
-          res.json({success: false, msg:'Failed to register user'});
+          res.status(500).json({success: false, msg:'Failed to register user'});
         } else {
-          res.json({success: true, msg:'User registered'});
+          res.status(201).json({success: true, msg:'User registered'});
         }
       })
     } else {
-      res.json({success: false, msg: 'Email already in use.'});
+      res.status(403).json({success: false, msg: 'Email already in use.'});
     }
   })
 });
@@ -41,36 +41,130 @@ router.post('/authenticate', (req, res, next) => {
   User.getUserByEmail(email,  (err, user) => {
     if(err) throw err;
     if(!user){
-      return res.json({success: false, msg: 'User not found'});
+      return res.status(404).json({success: false, msg: 'User not found'});
     }
 
     User.comparePassword(password, user.password, (err, isMatch) => {
       if(err) throw err;
       if(isMatch){
-        const token = jwt.sign({data:
+        const token = jwt.sign({payload:
           {user:{
             id: user._id,
-            name: user.name,
-            email: user.email
+            hasRoles: user.hasRoles
         }}},
           config.secret, {
             expiresIn: 1800 //30 minutes
         });
 
-      res.json({
-        success: true,
-        token: 'JWT ' + token
-      });
+      res.status(200).json({success: true, token: 'JWT ' + token});
       } else {
-        return res.json({success: false, msg: 'Wrong password'});
+        return res.status(401).json({success: false, msg: 'Wrong password.'});
       }
     });
   });
 });
 
-// Profile
+// Profile From JWT
 router.get('/profile', passport.authenticate('jwt', {session:false}), (req, res, next) => {
-  res.json({user: req.user});
+
+  res.status(200).json({success: true,
+    user:
+      {
+        _id: req.user._id,
+        name: req.user.name,
+        email: req.user.email,
+        hasRoles: req.user.hasRoles,
+        address: req.user.address
+      }
+  });
 });
+
+// Staff/Management request a profile
+router.get('/profile/:id', passport.authenticate('jwt', {session:false}), (req, res, next) => {
+
+  User.getUserById(req.params.id,  (err, user) => {
+    if(err) throw err;
+    if(!user){
+      return res.status(404).json({success: false, msg: 'User not found'});
+    }
+    if(!(req.user.hasRoles.includes('isStaff') && user.hasRoles.includes('isCustomer')
+      || req.user.hasRoles.includes('isManagement'))) {
+        return res.status(401).json({success: false, msg: 'Unauthorized.'});
+      } else {
+        var cleanUser = {
+          _id: user._id,
+          name: user.name,
+          email: user.email,
+          hasRoles: user.hasRoles
+        };
+
+        return res.status(200).json({success: true, user: cleanUser});
+      }
+  });
+});
+
+// User Edits Profile
+router.put('/profile/edit/:id', passport.authenticate('jwt', {session:false}), (req, res, next) => {
+
+  if(!req.user._id.equals(req.params.id)) {
+
+    return res.status(401).json({success: false, msg: 'Unauthorized.'});
+  } else {
+    var user = {
+      _id: req.params.id,
+      name: req.body.name || req.user.name,
+      email: req.body.email || req.user.email,
+      address: req.body.address || req.user.address
+    };
+    User.updateUserById(user, (err, newUser) => {
+      if(err) throw err;
+      return res.status(200).json({success: true, user});
+    });
+  }
+});
+
+
+// Get All Customers
+router.get('/show/customers', passport.authenticate('jwt', {session:false}), (req, res, next) => {
+
+    if(!req.user.hasRoles.includes('isStaff')){
+
+      return res.status(401).json({success: false, msg: 'Unauthorized.'});
+    } else {
+    User.getAllCustomers( ["isCustomer"], (err, users) => {
+      if (err) throw err;
+      if(!users){
+        return res.status(404).json({success: false, msg: 'Customers not found.'});
+      }
+
+      User.cleanArray(users, (err, cleanUsers) => {
+        if(err) throw err;
+        return res.status(200).json({success: true, users: cleanUsers});
+      });
+    });
+    }
+});
+
+// Get All Staff
+router.get('/show/staff', passport.authenticate('jwt', {session:false}), (req, res, next) => {
+
+    if(!req.user.hasRoles.includes('isManagement')){
+
+      return res.status(401).json({success: false, msg: 'Unauthorized.'});
+    } else {
+    User.getAllCustomers( ["isManagement"], (err, users) => {
+      if (err) throw err;
+      if(!users){
+        return res.status(404).json({success: false, msg: 'Staff not found.'});
+      }
+
+      User.cleanArray(users, (err, cleanUsers) => {
+        if(err) throw err;
+        return res.status(200).json({success: true, users: cleanUsers});
+      });
+    });
+    }
+});
+
 
 module.exports = router;
