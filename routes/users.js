@@ -131,7 +131,7 @@ router.get('/show/customers', passport.authenticate('jwt', {session:false}), (re
 
       return res.status(401).json({success: false, msg: 'Unauthorized.'});
     } else {
-    User.getAllCustomers( ["isCustomer"], (err, users) => {
+    User.getAllUsersByRole( ["isCustomer"], (err, users) => {
       if (err) throw err;
       if(!users){
         return res.status(404).json({success: false, msg: 'Customers not found.'});
@@ -152,7 +152,7 @@ router.get('/show/staff', passport.authenticate('jwt', {session:false}), (req, r
 
       return res.status(401).json({success: false, msg: 'Unauthorized.'});
     } else {
-    User.getAllCustomers( ["isManagement"], (err, users) => {
+    User.getAllUsersByRole( ["isStaff"], (err, users) => {
       if (err) throw err;
       if(!users){
         return res.status(404).json({success: false, msg: 'Staff not found.'});

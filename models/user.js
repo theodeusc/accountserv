@@ -45,8 +45,8 @@ module.exports.updateUserById = function(user, callback){
   });
 }
 
-module.exports.getAllCustomers = function(isCustomer, callback){
-  const query = {hasRoles:{$in: isCustomer}};
+module.exports.getAllUsersByRole = function(isRole, callback){
+  const query = {hasRoles:{$in: isRole}};
   User.find(query, callback);
 }
 
