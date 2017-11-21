@@ -41,7 +41,7 @@ router.post('/authenticate', (req, res, next) => {
   User.getUserByEmail(email,  (err, user) => {
     if(err) throw err;
     if(!user){
-      return res.status(404).json({success: false, msg: 'User not found'});
+      return res.json({success: false, msg: 'User or password incorrect.'});
     }
 
     User.comparePassword(password, user.password, (err, isMatch) => {
@@ -58,7 +58,7 @@ router.post('/authenticate', (req, res, next) => {
 
       res.status(200).json({success: true, token: 'JWT ' + token});
       } else {
-        return res.status(401).json({success: false, msg: 'Wrong password.'});
+        return res.json({success: false, msg: 'User or password incorrect.'});
       }
     });
   });
