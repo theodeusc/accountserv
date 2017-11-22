@@ -157,7 +157,7 @@ var AppModule = (function () {
                 __WEBPACK_IMPORTED_MODULE_0__angular_platform_browser__["a" /* BrowserModule */],
                 __WEBPACK_IMPORTED_MODULE_3__angular_http__["HttpModule"],
                 __WEBPACK_IMPORTED_MODULE_2__angular_forms__["a" /* FormsModule */],
-                __WEBPACK_IMPORTED_MODULE_4__angular_router__["b" /* RouterModule */].forRoot(appRoutes),
+                __WEBPACK_IMPORTED_MODULE_4__angular_router__["c" /* RouterModule */].forRoot(appRoutes),
                 __WEBPACK_IMPORTED_MODULE_14_angular2_flash_messages__["FlashMessagesModule"]
             ],
             providers: [
@@ -242,7 +242,7 @@ var CustomersComponent = (function () {
             encapsulation: __WEBPACK_IMPORTED_MODULE_0__angular_core__["ViewEncapsulation"].None
         }),
         __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_1__services_auth_service__["a" /* AuthService */],
-            __WEBPACK_IMPORTED_MODULE_2__angular_router__["a" /* Router */]])
+            __WEBPACK_IMPORTED_MODULE_2__angular_router__["b" /* Router */]])
     ], CustomersComponent);
     return CustomersComponent;
 }());
@@ -334,7 +334,7 @@ module.exports = module.exports.toString();
 /***/ "../../../../../src/app/components/edit-profile/edit-profile.component.html":
 /***/ (function(module, exports) {
 
-module.exports = "<p>\n  edit-profile works!\n</p>\n"
+module.exports = "<h2 class=\"page-header\">Edit Profile</h2>\n<form (submit)=\"onEditSubmit()\">\n  <div class=\"form-group\">\n      <label>Name</label>\n      <input type=\"text\" [placeholder]=\"this.oldProfile === undefined ? '' : this.oldProfile.name\" [(ngModel)]=\"name\" name=\"name\" class=\"form-control\">\n  </div>\n  <div class=\"form-group\">\n      <label>Email</label>\n      <input type=\"text\" [placeholder]=\"this.oldProfile === undefined ? '' : this.oldProfile.email\" [(ngModel)]=\"email\" name=\"email\" class=\"form-control\">\n  </div>\n  <div class=\"form-group\">\n      <label>Address</label>\n      <input type=\"text\" [placeholder]=\"this.oldProfile === undefined ? '' : this.oldProfile.address\" [(ngModel)]=\"address\" name=\"address\" class=\"form-control\">\n  </div>\n  <input type=\"submit\" class=\"btn btn-primary\" value=\"Submit\">\n</form>\n"
 
 /***/ }),
 
@@ -344,6 +344,11 @@ module.exports = "<p>\n  edit-profile works!\n</p>\n"
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return EditProfileComponent; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__("../../../core/esm5/core.js");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__services_validate_service__ = __webpack_require__("../../../../../src/app/services/validate.service.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__services_auth_service__ = __webpack_require__("../../../../../src/app/services/auth.service.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_angular2_flash_messages__ = __webpack_require__("../../../../angular2-flash-messages/index.js");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_angular2_flash_messages___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3_angular2_flash_messages__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__angular_router__ = __webpack_require__("../../../router/esm5/router.js");
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -354,10 +359,60 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 
+
+
+
+
 var EditProfileComponent = (function () {
-    function EditProfileComponent() {
+    function EditProfileComponent(validateService, flashMessage, authService, route, router) {
+        this.validateService = validateService;
+        this.flashMessage = flashMessage;
+        this.authService = authService;
+        this.route = route;
+        this.router = router;
     }
     EditProfileComponent.prototype.ngOnInit = function () {
+        var _this = this;
+        this._id = this.route.snapshot.params.id;
+        this.authService.getProfile().subscribe(function (profile) {
+            _this.oldProfile = profile.user;
+            if (_this._id != _this.oldProfile._id) {
+                _this.flashMessage.show('You are not allowed to do that.', { cssClass: 'alert-danger', timeout: 3000 });
+                _this.router.navigate(['/profile']);
+            }
+        }, function (err) {
+            _this.flashMessage.show('Something went wrong.', { cssClass: 'alert-danger', timeout: 3000 });
+            _this.router.navigate(['/profile']);
+        });
+    };
+    EditProfileComponent.prototype.onEditSubmit = function () {
+        var _this = this;
+        var user = {
+            name: this.name,
+            email: this.email,
+            address: this.address
+        };
+        // Required Fields
+        if (!this.validateService.validateEditProfile(user)) {
+            this.flashMessage.show('Please fill in required fields.', { cssClass: 'alert-danger', timeout: 3000 });
+            return false;
+        }
+        // Validate Email
+        if (!this.validateService.validateEmail(user.email)) {
+            this.flashMessage.show('Please use a valid email.', { cssClass: 'alert-danger', timeout: 3000 });
+            return false;
+        }
+        // Edit User Profile
+        this.authService.editUserProfile(user, this._id).subscribe(function (data) {
+            if (data.success) {
+                _this.flashMessage.show('You have successfully edited your profile.', { cssClass: 'alert-success', timeout: 3000 });
+                _this.router.navigate(['/profile']);
+            }
+            else {
+                _this.flashMessage.show('Something went wrong.', { cssClass: 'alert-danger', timeout: 3000 });
+                _this.router.navigate(['/profile']);
+            }
+        });
     };
     EditProfileComponent = __decorate([
         Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["Component"])({
@@ -366,7 +421,11 @@ var EditProfileComponent = (function () {
             styles: [__webpack_require__("../../../../../src/app/components/edit-profile/edit-profile.component.css")],
             encapsulation: __WEBPACK_IMPORTED_MODULE_0__angular_core__["ViewEncapsulation"].None
         }),
-        __metadata("design:paramtypes", [])
+        __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_1__services_validate_service__["a" /* ValidateService */],
+            __WEBPACK_IMPORTED_MODULE_3_angular2_flash_messages__["FlashMessagesService"],
+            __WEBPACK_IMPORTED_MODULE_2__services_auth_service__["a" /* AuthService */],
+            __WEBPACK_IMPORTED_MODULE_4__angular_router__["a" /* ActivatedRoute */],
+            __WEBPACK_IMPORTED_MODULE_4__angular_router__["b" /* Router */]])
     ], EditProfileComponent);
     return EditProfileComponent;
 }());
@@ -539,7 +598,7 @@ var LoginComponent = (function () {
         }),
         __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_1__services_auth_service__["a" /* AuthService */],
             __WEBPACK_IMPORTED_MODULE_2__services_validate_service__["a" /* ValidateService */],
-            __WEBPACK_IMPORTED_MODULE_3__angular_router__["a" /* Router */],
+            __WEBPACK_IMPORTED_MODULE_3__angular_router__["b" /* Router */],
             __WEBPACK_IMPORTED_MODULE_4_angular2_flash_messages__["FlashMessagesService"]])
     ], LoginComponent);
     return LoginComponent;
@@ -622,7 +681,7 @@ var NavbarComponent = (function () {
             encapsulation: __WEBPACK_IMPORTED_MODULE_0__angular_core__["ViewEncapsulation"].None
         }),
         __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_1__services_auth_service__["a" /* AuthService */],
-            __WEBPACK_IMPORTED_MODULE_2__angular_router__["a" /* Router */],
+            __WEBPACK_IMPORTED_MODULE_2__angular_router__["b" /* Router */],
             __WEBPACK_IMPORTED_MODULE_3_angular2_flash_messages__["FlashMessagesService"]])
     ], NavbarComponent);
     return NavbarComponent;
@@ -702,7 +761,7 @@ var ProfileComponent = (function () {
             encapsulation: __WEBPACK_IMPORTED_MODULE_0__angular_core__["ViewEncapsulation"].None
         }),
         __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_1__services_auth_service__["a" /* AuthService */],
-            __WEBPACK_IMPORTED_MODULE_2__angular_router__["a" /* Router */]])
+            __WEBPACK_IMPORTED_MODULE_2__angular_router__["b" /* Router */]])
     ], ProfileComponent);
     return ProfileComponent;
 }());
@@ -762,10 +821,10 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 
 
 var RegisterComponent = (function () {
-    function RegisterComponent(validateService, flashMessage, AuthService, router) {
+    function RegisterComponent(validateService, flashMessage, authService, router) {
         this.validateService = validateService;
         this.flashMessage = flashMessage;
-        this.AuthService = AuthService;
+        this.authService = authService;
         this.router = router;
     }
     RegisterComponent.prototype.ngOnInit = function () {
@@ -789,7 +848,7 @@ var RegisterComponent = (function () {
             return false;
         }
         // Register User
-        this.AuthService.registerUser(user).subscribe(function (data) {
+        this.authService.registerUser(user).subscribe(function (data) {
             if (data.success) {
                 _this.flashMessage.show('You are now registered and can log in.', { cssClass: 'alert-success', timeout: 3000 });
                 _this.router.navigate(['/login']);
@@ -810,7 +869,7 @@ var RegisterComponent = (function () {
         __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_1__services_validate_service__["a" /* ValidateService */],
             __WEBPACK_IMPORTED_MODULE_3_angular2_flash_messages__["FlashMessagesService"],
             __WEBPACK_IMPORTED_MODULE_2__services_auth_service__["a" /* AuthService */],
-            __WEBPACK_IMPORTED_MODULE_4__angular_router__["a" /* Router */]])
+            __WEBPACK_IMPORTED_MODULE_4__angular_router__["b" /* Router */]])
     ], RegisterComponent);
     return RegisterComponent;
 }());
@@ -889,7 +948,7 @@ var StaffComponent = (function () {
             encapsulation: __WEBPACK_IMPORTED_MODULE_0__angular_core__["ViewEncapsulation"].None
         }),
         __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_1__services_auth_service__["a" /* AuthService */],
-            __WEBPACK_IMPORTED_MODULE_2__angular_router__["a" /* Router */]])
+            __WEBPACK_IMPORTED_MODULE_2__angular_router__["b" /* Router */]])
     ], StaffComponent);
     return StaffComponent;
 }());
@@ -935,7 +994,7 @@ var AuthGuard = (function () {
     AuthGuard = __decorate([
         Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["Injectable"])(),
         __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_2__services_auth_service__["a" /* AuthService */],
-            __WEBPACK_IMPORTED_MODULE_1__angular_router__["a" /* Router */]])
+            __WEBPACK_IMPORTED_MODULE_1__angular_router__["b" /* Router */]])
     ], AuthGuard);
     return AuthGuard;
 }());
@@ -1023,6 +1082,13 @@ var AuthService = (function () {
         return this.http.post('users/register', user, { headers: headers })
             .map(function (res) { return res.json(); });
     };
+    AuthService.prototype.editUserProfile = function (user, _id) {
+        var headers = new __WEBPACK_IMPORTED_MODULE_1__angular_http__["Headers"]();
+        headers.append('Authorization', this.authToken);
+        headers.append('Content-Type', 'application/json');
+        return this.http.put('users/profile/edit/' + _id, user, { headers: headers })
+            .map(function (res) { return res.json(); });
+    };
     AuthService.prototype.authenticateUser = function (user) {
         var headers = new __WEBPACK_IMPORTED_MODULE_1__angular_http__["Headers"]();
         headers.append('Content-Type', 'application/json');
@@ -1087,6 +1153,15 @@ var ValidateService = (function () {
         if (user.name == undefined ||
             user.email == undefined ||
             user.password == undefined) {
+            return false;
+        }
+        else {
+            return true;
+        }
+    };
+    ValidateService.prototype.validateEditProfile = function (user) {
+        if (user.name == undefined ||
+            user.email == undefined) {
             return false;
         }
         else {

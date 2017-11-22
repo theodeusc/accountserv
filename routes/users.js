@@ -108,7 +108,7 @@ router.put('/profile/edit/:id', passport.authenticate('jwt', {session:false}), (
 
   if(!req.user._id.equals(req.params.id)) {
 
-    return res.status(401).json({success: false, msg: 'Unauthorized.'});
+    return res.json({success: false, msg: 'Unauthorized.'});
   } else {
     var user = {
       _id: req.params.id,
