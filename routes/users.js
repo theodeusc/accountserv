@@ -83,22 +83,15 @@ router.get('/profile', passport.authenticate('jwt', {session:false}), (req, res,
 router.get('/profile/:id', passport.authenticate('jwt', {session:false}), (req, res, next) => {
 
   User.getUserById(req.params.id,  (err, user) => {
-    if(err) throw err;
-    if(!user){
-      return res.status(404).json({success: false, msg: 'User not found'});
+    if(err) {
+       return res.status(404).json({success: false, msg: 'User not found'});
     }
+
     if(!(req.user.hasRoles.includes('isStaff') && user.hasRoles.includes('isCustomer')
       || req.user.hasRoles.includes('isManagement'))) {
-        return res.status(401).json({success: false, msg: 'Unauthorized.'});
+        return res.json({success: false, msg: 'Unauthorized.'});
       } else {
-        var cleanUser = {
-          _id: user._id,
-          name: user.name,
-          email: user.email,
-          hasRoles: user.hasRoles
-        };
-
-        return res.status(200).json({success: true, user: cleanUser});
+        return res.status(200).json({success: true, user: user});
       }
   });
 });
@@ -137,10 +130,7 @@ router.get('/show/customers', passport.authenticate('jwt', {session:false}), (re
         return res.status(404).json({success: false, msg: 'Customers not found.'});
       }
 
-      User.cleanArray(users, (err, cleanUsers) => {
-        if(err) throw err;
-        return res.status(200).json({success: true, users: cleanUsers});
-      });
+      return res.status(200).json({success: true, users: users});
     });
     }
 });
@@ -158,10 +148,7 @@ router.get('/show/staff', passport.authenticate('jwt', {session:false}), (req, r
         return res.status(404).json({success: false, msg: 'Staff not found.'});
       }
 
-      User.cleanArray(users, (err, cleanUsers) => {
-        if(err) throw err;
-        return res.status(200).json({success: true, users: cleanUsers});
-      });
+      return res.status(200).json({success: true, users: users});
     });
     }
 });

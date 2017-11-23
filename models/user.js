@@ -30,7 +30,7 @@ const UserSchema = mongoose.Schema({
 const User = module.exports = mongoose.model('User', UserSchema);
 
 module.exports.getUserById = function(id, callback){
-  User.findById(id, callback);
+  User.findById(id, 'name email address hasRoles' , callback);
 }
 
 module.exports.getUserByEmail = function(email, callback){
@@ -41,13 +41,13 @@ module.exports.getUserByEmail = function(email, callback){
 module.exports.updateUserById = function(user, callback){
   User.findByIdAndUpdate({_id: user._id}, user, (err, newUser) => {
     if(err) throw err;
-    User.findOne({_id: user.id}, callback);
+    User.findOne({_id: user.id}, 'name email address hasRoles', callback);
   });
 }
 
 module.exports.getAllUsersByRole = function(isRole, callback){
   const query = {hasRoles:{$in: isRole}};
-  User.find(query, callback);
+  User.find(query, 'name email address hasRoles', callback);
 }
 
 module.exports.addUser = function(newUser, callback){
@@ -58,23 +58,6 @@ module.exports.addUser = function(newUser, callback){
       newUser.save(callback);
     });
   });
-}
-
-module.exports.cleanArray = function(users, callback){
-
-  var cleanUsers = [];
-  for(var i = 0; i < users.length; i++){
-
-    cleanUsers.push({
-          id: users[i]._id,
-          name: users[i].name,
-          email: users[i].email,
-          address: users[i].address,
-          hasRoles: users[i].hasRoles
-        });
-  }
-
-  callback(null, cleanUsers);
 }
 
 module.exports.comparePassword = function(candidatePassword, hash, callback){

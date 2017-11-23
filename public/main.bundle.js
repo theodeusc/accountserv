@@ -99,6 +99,8 @@ var AppComponent = (function () {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_17__components_staff_staff_component__ = __webpack_require__("../../../../../src/app/components/staff/staff.component.ts");
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_18__pipes_filter_pipe__ = __webpack_require__("../../../../../src/app/pipes/filter.pipe.ts");
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_19__components_edit_profile_edit_profile_component__ = __webpack_require__("../../../../../src/app/components/edit-profile/edit-profile.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_20__components_customer_profile_customer_profile_component__ = __webpack_require__("../../../../../src/app/components/customer-profile/customer-profile.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_21__components_staff_profile_staff_profile_component__ = __webpack_require__("../../../../../src/app/components/staff-profile/staff-profile.component.ts");
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -125,15 +127,19 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 
 
 
+
+
 var appRoutes = [
     { path: '', component: __WEBPACK_IMPORTED_MODULE_9__components_home_home_component__["a" /* HomeComponent */] },
     { path: 'register', component: __WEBPACK_IMPORTED_MODULE_8__components_register_register_component__["a" /* RegisterComponent */] },
     { path: 'login', component: __WEBPACK_IMPORTED_MODULE_7__components_login_login_component__["a" /* LoginComponent */] },
     { path: 'dashboard', component: __WEBPACK_IMPORTED_MODULE_10__components_dashboard_dashboard_component__["a" /* DashboardComponent */], canActivate: [__WEBPACK_IMPORTED_MODULE_15__guards_auth_guard__["a" /* AuthGuard */]] },
     { path: 'profile', component: __WEBPACK_IMPORTED_MODULE_11__components_profile_profile_component__["a" /* ProfileComponent */], canActivate: [__WEBPACK_IMPORTED_MODULE_15__guards_auth_guard__["a" /* AuthGuard */]] },
+    { path: 'customers/:id', component: __WEBPACK_IMPORTED_MODULE_20__components_customer_profile_customer_profile_component__["a" /* CustomerProfileComponent */], canActivate: [__WEBPACK_IMPORTED_MODULE_15__guards_auth_guard__["a" /* AuthGuard */]] },
     { path: 'profile/edit/:id', component: __WEBPACK_IMPORTED_MODULE_19__components_edit_profile_edit_profile_component__["a" /* EditProfileComponent */], canActivate: [__WEBPACK_IMPORTED_MODULE_15__guards_auth_guard__["a" /* AuthGuard */]] },
     { path: 'customers', component: __WEBPACK_IMPORTED_MODULE_16__components_customers_customers_component__["a" /* CustomersComponent */], canActivate: [__WEBPACK_IMPORTED_MODULE_15__guards_auth_guard__["a" /* AuthGuard */]] },
-    { path: 'staff', component: __WEBPACK_IMPORTED_MODULE_17__components_staff_staff_component__["a" /* StaffComponent */], canActivate: [__WEBPACK_IMPORTED_MODULE_15__guards_auth_guard__["a" /* AuthGuard */]] }
+    { path: 'staff', component: __WEBPACK_IMPORTED_MODULE_17__components_staff_staff_component__["a" /* StaffComponent */], canActivate: [__WEBPACK_IMPORTED_MODULE_15__guards_auth_guard__["a" /* AuthGuard */]] },
+    { path: 'staff/:id', component: __WEBPACK_IMPORTED_MODULE_21__components_staff_profile_staff_profile_component__["a" /* StaffProfileComponent */], canActivate: [__WEBPACK_IMPORTED_MODULE_15__guards_auth_guard__["a" /* AuthGuard */]] },
 ];
 var AppModule = (function () {
     function AppModule() {
@@ -151,7 +157,9 @@ var AppModule = (function () {
                 __WEBPACK_IMPORTED_MODULE_16__components_customers_customers_component__["a" /* CustomersComponent */],
                 __WEBPACK_IMPORTED_MODULE_17__components_staff_staff_component__["a" /* StaffComponent */],
                 __WEBPACK_IMPORTED_MODULE_18__pipes_filter_pipe__["a" /* FilterPipe */],
-                __WEBPACK_IMPORTED_MODULE_19__components_edit_profile_edit_profile_component__["a" /* EditProfileComponent */]
+                __WEBPACK_IMPORTED_MODULE_19__components_edit_profile_edit_profile_component__["a" /* EditProfileComponent */],
+                __WEBPACK_IMPORTED_MODULE_20__components_customer_profile_customer_profile_component__["a" /* CustomerProfileComponent */],
+                __WEBPACK_IMPORTED_MODULE_21__components_staff_profile_staff_profile_component__["a" /* StaffProfileComponent */]
             ],
             imports: [
                 __WEBPACK_IMPORTED_MODULE_0__angular_platform_browser__["a" /* BrowserModule */],
@@ -169,6 +177,103 @@ var AppModule = (function () {
         })
     ], AppModule);
     return AppModule;
+}());
+
+
+
+/***/ }),
+
+/***/ "../../../../../src/app/components/customer-profile/customer-profile.component.css":
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__("../../../../css-loader/lib/css-base.js")(false);
+// imports
+
+
+// module
+exports.push([module.i, "", ""]);
+
+// exports
+
+
+/*** EXPORTS FROM exports-loader ***/
+module.exports = module.exports.toString();
+
+/***/ }),
+
+/***/ "../../../../../src/app/components/customer-profile/customer-profile.component.html":
+/***/ (function(module, exports) {
+
+module.exports = "<div *ngIf=\"user\">\n  <h2 class=\"page-header\">{{user.name}}</h2> <button class=\"btn btn-info\" (click)=\"toggleBuy(user._id)\">Toggle Buy</button>\n  <ul class=\"list-group\">\n    <li class=\"list-group-item\">Email: {{user.email}}</li>\n    <li class=\"list-group-item\">Address: {{user.address}}</li>\n    <li class=\"list-group-item\" *ngIf=\"user.hasRoles.includes('notApproved')\">Customer not approved.</li>\n    <li class=\"list-group-item\" *ngIf=\"!user.hasRoles.includes('notApproved')\">Customer has been aproved.</li>\n  </ul>\n</div>\n"
+
+/***/ }),
+
+/***/ "../../../../../src/app/components/customer-profile/customer-profile.component.ts":
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return CustomerProfileComponent; });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__("../../../core/esm5/core.js");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__services_validate_service__ = __webpack_require__("../../../../../src/app/services/validate.service.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__services_auth_service__ = __webpack_require__("../../../../../src/app/services/auth.service.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_angular2_flash_messages__ = __webpack_require__("../../../../angular2-flash-messages/index.js");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_angular2_flash_messages___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3_angular2_flash_messages__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__angular_router__ = __webpack_require__("../../../router/esm5/router.js");
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+
+
+
+
+
+var CustomerProfileComponent = (function () {
+    function CustomerProfileComponent(validateService, flashMessage, authService, route, router) {
+        this.validateService = validateService;
+        this.flashMessage = flashMessage;
+        this.authService = authService;
+        this.route = route;
+        this.router = router;
+    }
+    CustomerProfileComponent.prototype.ngOnInit = function () {
+        var _this = this;
+        this._id = this.route.snapshot.params.id;
+        this.authService.getUserProfile(this._id).subscribe(function (profile) {
+            if (!profile.success) {
+                _this.flashMessage.show('You are not authorized to view that.', { cssClass: 'alert-danger', timeout: 3000 });
+                _this.router.navigate(['/customers']);
+            }
+            else {
+                _this.user = profile.user;
+            }
+        }, function (err) {
+            _this.flashMessage.show('Something went wrong.', { cssClass: 'alert-danger', timeout: 3000 });
+            _this.router.navigate(['/customers']);
+        });
+    };
+    CustomerProfileComponent.prototype.toggleBuy = function (id) {
+        console.log("Not yet implemented " + id);
+    };
+    CustomerProfileComponent = __decorate([
+        Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["Component"])({
+            selector: 'app-customer-profile',
+            template: __webpack_require__("../../../../../src/app/components/customer-profile/customer-profile.component.html"),
+            styles: [__webpack_require__("../../../../../src/app/components/customer-profile/customer-profile.component.css")],
+            encapsulation: __WEBPACK_IMPORTED_MODULE_0__angular_core__["ViewEncapsulation"].None
+        }),
+        __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_1__services_validate_service__["a" /* ValidateService */],
+            __WEBPACK_IMPORTED_MODULE_3_angular2_flash_messages__["FlashMessagesService"],
+            __WEBPACK_IMPORTED_MODULE_2__services_auth_service__["a" /* AuthService */],
+            __WEBPACK_IMPORTED_MODULE_4__angular_router__["a" /* ActivatedRoute */],
+            __WEBPACK_IMPORTED_MODULE_4__angular_router__["b" /* Router */]])
+    ], CustomerProfileComponent);
+    return CustomerProfileComponent;
 }());
 
 
@@ -196,7 +301,7 @@ module.exports = module.exports.toString();
 /***/ "../../../../../src/app/components/customers/customers.component.html":
 /***/ (function(module, exports) {
 
-module.exports = "<div class=\"container\">\n  <form id=\"filter\">\n    <label>Filter customers by name or email:</label>\n    <input type=\"text\" [(ngModel)]=\"term\" name=\"term\" />\n  </form>\n  <table class=\"table table-striped table-hover table-bordered table-responsive\">\n    <thead class=\"thead-inverse\">\n      <tr>\n        <th>#</th>\n        <th>Name</th>\n        <th>Email</th>\n        <th>Address</th>\n      </tr>\n    </thead>\n    <tbody>\n      <tr *ngFor=\"let user of users | filter:term\">\n        <td>{{users.indexOf(user) + 1}}</td>\n        <td>{{user.name}}</td>\n        <td>{{user.email}}</td>\n        <td>{{user.address}}</td>\n      </tr>\n    </tbody>\n  </table>\n</div>\n"
+module.exports = "<div class=\"container\" *ngIf=\"users\">\n  <form id=\"filter\">\n    <label>Filter customers by name or email:</label>\n    <input type=\"text\" [(ngModel)]=\"term\" name=\"term\" />\n  </form>\n  <table class=\"table table-striped table-hover table-bordered table-responsive\">\n    <thead class=\"thead-inverse\">\n      <tr>\n        <th>#</th>\n        <th>Name</th>\n        <th>Email</th>\n        <th>Address</th>\n      </tr>\n    </thead>\n    <tbody>\n      <tr *ngFor=\"let user of users | filter:term\">\n        <td>{{users.indexOf(user) + 1}}</td>\n        <td>{{user.name}}</td>\n        <td>{{user.email}}</td>\n        <td>{{user.address}}</td>\n        <td><button class=\"btn btn-info\" (click)=\"viewProfile(user)\">View Profile</button></td>\n      </tr>\n    </tbody>\n  </table>\n</div>\n"
 
 /***/ }),
 
@@ -233,6 +338,9 @@ var CustomersComponent = (function () {
             console.log(err);
             return false;
         });
+    };
+    CustomersComponent.prototype.viewProfile = function (user) {
+        this.router.navigate(['/customers/', user._id]);
     };
     CustomersComponent = __decorate([
         Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["Component"])({
@@ -334,7 +442,7 @@ module.exports = module.exports.toString();
 /***/ "../../../../../src/app/components/edit-profile/edit-profile.component.html":
 /***/ (function(module, exports) {
 
-module.exports = "<h2 class=\"page-header\">Edit Profile</h2>\n<form (submit)=\"onEditSubmit()\">\n  <div class=\"form-group\">\n      <label>Name</label>\n      <input type=\"text\" [placeholder]=\"this.oldProfile === undefined ? '' : this.oldProfile.name\" [(ngModel)]=\"name\" name=\"name\" class=\"form-control\">\n  </div>\n  <div class=\"form-group\">\n      <label>Email</label>\n      <input type=\"text\" [placeholder]=\"this.oldProfile === undefined ? '' : this.oldProfile.email\" [(ngModel)]=\"email\" name=\"email\" class=\"form-control\">\n  </div>\n  <div class=\"form-group\">\n      <label>Address</label>\n      <input type=\"text\" [placeholder]=\"this.oldProfile === undefined ? '' : this.oldProfile.address\" [(ngModel)]=\"address\" name=\"address\" class=\"form-control\">\n  </div>\n  <input type=\"submit\" class=\"btn btn-primary\" value=\"Submit\">\n</form>\n"
+module.exports = "<h2 class=\"page-header\">Edit Profile</h2>\n<form (submit)=\"onEditSubmit()\" *ngIf=\"oldProfile\">\n  <div class=\"form-group\">\n      <label>Name</label>\n      <input type=\"text\" [placeholder]=\"this.oldProfile.name\" [(ngModel)]=\"name\" name=\"name\" class=\"form-control\">\n  </div>\n  <div class=\"form-group\">\n      <label>Email</label>\n      <input type=\"text\" [placeholder]=\"this.oldProfile.email\" [(ngModel)]=\"email\" name=\"email\" class=\"form-control\">\n  </div>\n  <div class=\"form-group\">\n      <label>Address</label>\n      <input type=\"text\" [placeholder]=\"this.oldProfile.address\" [(ngModel)]=\"address\" name=\"address\" class=\"form-control\">\n  </div>\n  <input type=\"submit\" class=\"btn btn-primary\" value=\"Submit\">\n</form>\n"
 
 /***/ }),
 
@@ -751,7 +859,7 @@ var ProfileComponent = (function () {
         });
     };
     ProfileComponent.prototype.redirectToProfileEdit = function (id) {
-        this.router.navigate(['/profile/edit', id]);
+        this.router.navigate(['/profile/edit/', id]);
     };
     ProfileComponent = __decorate([
         Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["Component"])({
@@ -878,6 +986,68 @@ var RegisterComponent = (function () {
 
 /***/ }),
 
+/***/ "../../../../../src/app/components/staff-profile/staff-profile.component.css":
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__("../../../../css-loader/lib/css-base.js")(false);
+// imports
+
+
+// module
+exports.push([module.i, "", ""]);
+
+// exports
+
+
+/*** EXPORTS FROM exports-loader ***/
+module.exports = module.exports.toString();
+
+/***/ }),
+
+/***/ "../../../../../src/app/components/staff-profile/staff-profile.component.html":
+/***/ (function(module, exports) {
+
+module.exports = "<p>\n  staff-profile works!\n</p>\n"
+
+/***/ }),
+
+/***/ "../../../../../src/app/components/staff-profile/staff-profile.component.ts":
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return StaffProfileComponent; });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__("../../../core/esm5/core.js");
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+
+var StaffProfileComponent = (function () {
+    function StaffProfileComponent() {
+    }
+    StaffProfileComponent.prototype.ngOnInit = function () {
+    };
+    StaffProfileComponent = __decorate([
+        Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["Component"])({
+            selector: 'app-staff-profile',
+            template: __webpack_require__("../../../../../src/app/components/staff-profile/staff-profile.component.html"),
+            styles: [__webpack_require__("../../../../../src/app/components/staff-profile/staff-profile.component.css")],
+            encapsulation: __WEBPACK_IMPORTED_MODULE_0__angular_core__["ViewEncapsulation"].None
+        }),
+        __metadata("design:paramtypes", [])
+    ], StaffProfileComponent);
+    return StaffProfileComponent;
+}());
+
+
+
+/***/ }),
+
 /***/ "../../../../../src/app/components/staff/staff.component.css":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -899,7 +1069,7 @@ module.exports = module.exports.toString();
 /***/ "../../../../../src/app/components/staff/staff.component.html":
 /***/ (function(module, exports) {
 
-module.exports = "<div class=\"container\">\n  <form id=\"filter\">\n    <label>Filter staff by name or email:</label>\n    <input type=\"text\" [(ngModel)]=\"term\" name=\"term\" />\n  </form>\n  <table class=\"table table-striped table-hover table-bordered table-responsive\">\n    <thead class=\"thead-inverse\">\n      <tr>\n        <th>#</th>\n        <th>Name</th>\n        <th>Email</th>\n        <th>Address</th>\n      </tr>\n    </thead>\n    <tbody>\n      <tr *ngFor=\"let user of users | filter:term\">\n        <td>{{users.indexOf(user) + 1}}</td>\n        <td>{{user.name}}</td>\n        <td>{{user.email}}</td>\n        <td>{{user.address}}</td>\n        <td><button class=\"editBtn\" (click)=\"editPermissions(user)\">Edit</button></td>\n      </tr>\n    </tbody>\n  </table>\n</div>\n"
+module.exports = "<div class=\"container\" *ngIf=\"users\">\n  <form id=\"filter\">\n    <label>Filter staff by name or email:</label>\n    <input type=\"text\" [(ngModel)]=\"term\" name=\"term\" />\n  </form>\n  <table class=\"table table-striped table-hover table-bordered table-responsive\">\n    <thead class=\"thead-inverse\">\n      <tr>\n        <th>#</th>\n        <th>Name</th>\n        <th>Email</th>\n        <th>Address</th>\n      </tr>\n    </thead>\n    <tbody>\n      <tr *ngFor=\"let user of users | filter:term\">\n        <td>{{users.indexOf(user) + 1}}</td>\n        <td>{{user.name}}</td>\n        <td>{{user.email}}</td>\n        <td>{{user.address}}</td>\n        <td><button class=\"btn btn-info\" (click)=\"editPermissions(user)\">Edit</button></td>\n      </tr>\n    </tbody>\n  </table>\n</div>\n"
 
 /***/ }),
 
@@ -1068,12 +1238,12 @@ var AuthService = (function () {
     function AuthService(http) {
         this.http = http;
     }
-    AuthService.prototype.getWithAuth = function (address) {
+    AuthService.prototype.getWithAuth = function (email) {
         var headers = new __WEBPACK_IMPORTED_MODULE_1__angular_http__["Headers"]();
         this.loadToken();
         headers.append('Authorization', this.authToken);
         headers.append('Content-Type', 'application/json');
-        return this.http.get(address, { headers: headers })
+        return this.http.get(email, { headers: headers })
             .map(function (res) { return res.json(); });
     };
     AuthService.prototype.registerUser = function (user) {
@@ -1097,6 +1267,9 @@ var AuthService = (function () {
     };
     AuthService.prototype.getProfile = function () {
         return this.getWithAuth('users/profile');
+    };
+    AuthService.prototype.getUserProfile = function (_id) {
+        return this.getWithAuth('users/profile/' + _id);
     };
     AuthService.prototype.getCustomers = function () {
         return this.getWithAuth('users/show/customers');
