@@ -96,6 +96,26 @@ router.get('/profile/:id', passport.authenticate('jwt', {session:false}), (req, 
   });
 });
 
+// Staff Toggles Customer Approval
+router.put('/profile/:id/toggleBuy', passport.authenticate('jwt', {session:false}), (req, res, next) => {
+  User.getUserById(req.params.id,  (err, user) => {
+    if(err) {
+       return res.status(404).json({success: false, msg: 'User not found'});
+    }
+    if(!(req.user.hasRoles.includes('isStaff') && user.hasRoles.includes('isCustomer'))) {
+        return res.json({success: false, msg: 'Unauthorized.'});
+      } else {
+
+        User.toggleBuy(user, (err, user) => {
+          if(err) {
+            res.status(404).json({success: false, msg: "User not found."});
+          }
+          return res.status(200).json({success: true, user});
+        });
+      }
+  });
+});
+
 // User Edits Profile
 router.put('/profile/edit/:id', passport.authenticate('jwt', {session:false}), (req, res, next) => {
 
@@ -109,13 +129,15 @@ router.put('/profile/edit/:id', passport.authenticate('jwt', {session:false}), (
       email: req.body.email || req.user.email,
       address: req.body.address || req.user.address
     };
-    User.updateUserById(user, (err, newUser) => {
-      if(err) throw err;
+    User.updateUser(user, (err, user) => {
+      if(err) {
+        res.status(404).json({success: false, msg: "User not found."});
+      }
+
       return res.status(200).json({success: true, user});
     });
   }
 });
-
 
 // Get All Customers
 router.get('/show/customers', passport.authenticate('jwt', {session:false}), (req, res, next) => {

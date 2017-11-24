@@ -23,7 +23,8 @@ const UserSchema = mongoose.Schema({
     type: [String],
     default: [
       "isCustomer",
-      "notApproved"]
+      "notApproved",
+      "newCustomer"]
   }
 });
 
@@ -38,10 +39,35 @@ module.exports.getUserByEmail = function(email, callback){
   User.findOne(query, callback);
 }
 
-module.exports.updateUserById = function(user, callback){
+module.exports.updateUser = function(user, callback){
+
   User.findByIdAndUpdate({_id: user._id}, user, (err, newUser) => {
     if(err) throw err;
-    User.findOne({_id: user.id}, 'name email address hasRoles', callback);
+
+    User.findOne({_id: user._id}, 'name email address hasRoles', callback);
+  });
+}
+
+module.exports.toggleBuy = function (user, callback){
+
+  User.findOne({_id: user._id}, (err, user) => {
+    if(err) throw err;
+
+    // if customer is new, remove new customer role
+    if(user.hasRoles.includes('newCustomer')){
+      user.hasRoles = user.hasRoles.filter(e => e !== 'newCustomer');
+    }
+
+    if(user.hasRoles.includes('notApproved')){
+      user.hasRoles = user.hasRoles.filter(e => e !== 'notApproved');
+    } else {
+      user.hasRoles.push('notApproved');
+    }
+
+    User.findByIdAndUpdate({_id: user._id}, user, (err, user) => {
+
+      User.findOne({_id: user._id}, 'name email address hasRoles', callback);
+    });
   });
 }
 
