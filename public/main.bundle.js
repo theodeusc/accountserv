@@ -139,7 +139,7 @@ var appRoutes = [
     { path: 'profile/edit/:id', component: __WEBPACK_IMPORTED_MODULE_14__components_edit_profile_edit_profile_component__["a" /* EditProfileComponent */], canActivate: [__WEBPACK_IMPORTED_MODULE_6__guards_auth_guard__["a" /* AuthGuard */]] },
     { path: 'customers', component: __WEBPACK_IMPORTED_MODULE_17__components_customers_customers_component__["a" /* CustomersComponent */], canActivate: [__WEBPACK_IMPORTED_MODULE_6__guards_auth_guard__["a" /* AuthGuard */]] },
     { path: 'staff', component: __WEBPACK_IMPORTED_MODULE_18__components_staff_staff_component__["a" /* StaffComponent */], canActivate: [__WEBPACK_IMPORTED_MODULE_6__guards_auth_guard__["a" /* AuthGuard */]] },
-    { path: 'staff/:id', component: __WEBPACK_IMPORTED_MODULE_16__components_staff_profile_staff_profile_component__["a" /* StaffProfileComponent */], canActivate: [__WEBPACK_IMPORTED_MODULE_6__guards_auth_guard__["a" /* AuthGuard */]] },
+    { path: 'staff/:id', component: __WEBPACK_IMPORTED_MODULE_16__components_staff_profile_staff_profile_component__["a" /* StaffProfileComponent */], canActivate: [__WEBPACK_IMPORTED_MODULE_6__guards_auth_guard__["a" /* AuthGuard */]] }
 ];
 var AppModule = (function () {
     function AppModule() {
@@ -305,7 +305,7 @@ exports = module.exports = __webpack_require__("../../../../css-loader/lib/css-b
 
 
 // module
-exports.push([module.i, ".thead-inverse th {\r\n            color: #fff;\r\n            background-color: #373a3c;\r\n        }\r\n", ""]);
+exports.push([module.i, ".thead-inverse th {\r\n  color: #fff;\r\n  background-color: #373a3c;\r\n}\r\n.table > tbody > tr > td {\r\n  vertical-align: middle;\r\n}\r\n", ""]);
 
 // exports
 
@@ -318,7 +318,7 @@ module.exports = module.exports.toString();
 /***/ "../../../../../src/app/components/customers/customers.component.html":
 /***/ (function(module, exports) {
 
-module.exports = "<div class=\"container\" *ngIf=\"users\">\n  <form id=\"filter\">\n    <label>Filter customers by name or email:</label>\n    <input type=\"text\" [(ngModel)]=\"term\" name=\"term\" />\n    <button (click)=\"toggleNewCustomers()\"  class=\"btn btn-default\" style=\"float: right\">\n     <span *ngIf=\"!newOnly\">Show new customers only</span>\n     <span *ngIf=\"newOnly\">Show all customers</span>\n    </button>\n  </form>\n  <table class=\"table table-striped table-hover table-sm table-responsive\">\n    <thead class=\"thead-inverse\">\n      <tr>\n        <th>#</th>\n        <th>Name</th>\n        <th>Email</th>\n        <th>Address</th>\n        <th class=\"text-center\">Approval Status</th>\n      </tr>\n    </thead>\n    <tbody>\n      <tr *ngFor=\"let user of users | filter: term : newOnly\">\n        <td>{{users.indexOf(user) + 1}}</td>\n        <td>\n          {{user.name}}\n          <span *ngIf=\"user.hasRoles.includes('newCustomer')\" class=\"label label-warning\">NEW</span>\n          <button style=\"float: right\" class=\"btn btn-info\" (click)=\"viewProfile(user)\">View Profile</button>\n        </td>\n        <td>{{user.email}}</td>\n        <td>{{user.address}}</td>\n        <td class=\"text-center\">\n          <span *ngIf=\"!user.hasRoles.includes('notApproved')\" class=\"label label-success\">Approved</span>\n          <span *ngIf=\"user.hasRoles.includes('notApproved')\" class=\"label label-danger\">Approved</span>\n        </td>\n      </tr>\n    </tbody>\n  </table>\n</div>\n"
+module.exports = "<div class=\"container\" *ngIf=\"users\">\n  <form id=\"filter\">\n    <label>Filter customers by name or email:</label>\n    <input type=\"text\" [(ngModel)]=\"term\" name=\"term\" />\n    <button (click)=\"toggleNewCustomers()\"  class=\"btn btn-default\" style=\"float: right\">\n     <span *ngIf=\"!newOnly\">Show new customers only</span>\n     <span *ngIf=\"newOnly\">Show all customers</span>\n    </button>\n  </form>\n  <table class=\"table table-striped table-hover table-bordered table-responsive\">\n    <thead class=\"thead-inverse\">\n      <tr>\n        <th>#</th>\n        <th>Name</th>\n        <th>Email</th>\n        <th>Address</th>\n        <th class=\"text-center\">Approval Status</th>\n      </tr>\n    </thead>\n    <tbody>\n      <tr *ngFor=\"let user of users | filter:term:newOnly\">\n        <td>{{users.indexOf(user) + 1}}</td>\n        <td>\n          {{user.name}}\n          <span *ngIf=\"user.hasRoles.includes('newCustomer')\" class=\"label label-warning\">NEW</span>\n          <button style=\"float: right\" class=\"btn btn-info\" (click)=\"viewProfile(user)\">View Profile</button>\n        </td>\n        <td>{{user.email}}</td>\n        <td>{{user.address}}</td>\n        <td class=\"text-center\">\n          <span *ngIf=\"!user.hasRoles.includes('notApproved')\" class=\"label label-success\">Approved</span>\n          <span *ngIf=\"user.hasRoles.includes('notApproved')\" class=\"label label-danger\">Approved</span>\n        </td>\n      </tr>\n    </tbody>\n  </table>\n</div>\n"
 
 /***/ }),
 
@@ -543,8 +543,7 @@ var EditProfileComponent = (function () {
                 _this.router.navigate(['/profile']);
             }
             else {
-                _this.flashMessage.show('Something went wrong.', { cssClass: 'alert-danger', timeout: 3000 });
-                _this.router.navigate(['/profile']);
+                _this.flashMessage.show(data.msg, { cssClass: 'alert-danger', timeout: 3000 });
             }
         });
     };
@@ -930,7 +929,7 @@ module.exports = module.exports.toString();
 /***/ "../../../../../src/app/components/register/register.component.html":
 /***/ (function(module, exports) {
 
-module.exports = "<h2 class=\"page-header\">Register</h2>\n<form (submit)=\"onRegisterSubmit()\">\n  <div class=\"form-group\">\n      <label>Name</label>\n      <input type=\"text\" [(ngModel)]=\"name\" name=\"name\" class=\"form-control\">\n  </div>\n  <div class=\"form-group\">\n      <label>Email</label>\n      <input type=\"text\" [(ngModel)]=\"email\" name=\"email\" class=\"form-control\">\n  </div>\n  <div class=\"form-group\">\n      <label>Address</label>\n      <input type=\"text\" [(ngModel)]=\"address\" name=\"address\" class=\"form-control\">\n  </div>\n  <div class=\"form-group\">\n      <label>Password</label>\n      <input type=\"password\" [(ngModel)]=\"password\" name=\"password\" class=\"form-control\">\n  </div>\n  <input type=\"submit\" class=\"btn btn-primary\" value=\"Submit\">\n</form>\n"
+module.exports = "<h2 class=\"page-header\">Register</h2>\n<form (submit)=\"onRegisterSubmit()\">\n  <div class=\"form-group\">\n      <label>Name</label>\n      <input required minlength=\"4\" type=\"text\" [(ngModel)]=\"name\" name=\"name\" class=\"form-control\">\n  </div>\n  <div class=\"form-group\">\n      <label>Email</label>\n      <input type=\"text\" [(ngModel)]=\"email\" name=\"email\" class=\"form-control\">\n  </div>\n  <div class=\"form-group\">\n      <label>Address</label>\n      <input type=\"text\" [(ngModel)]=\"address\" name=\"address\" class=\"form-control\">\n  </div>\n  <div class=\"form-group\">\n      <label>Password</label>\n      <input type=\"password\" [(ngModel)]=\"password\" name=\"password\" class=\"form-control\">\n  </div>\n  <div class=\"form-group\">\n      <label>Confirm password</label>\n      <input type=\"password\" [(ngModel)]=\"passwordConfirm\" name=\"passwordConfirm\" class=\"form-control\">\n  </div>\n  <input type=\"submit\" class=\"btn btn-primary\" value=\"Submit\">\n</form>\n"
 
 /***/ }),
 
@@ -974,7 +973,8 @@ var RegisterComponent = (function () {
             name: this.name,
             email: this.email,
             address: this.address,
-            password: this.password
+            password: this.password,
+            passwordConfirm: this.passwordConfirm
         };
         // Required Fields
         if (!this.validateService.validateRegister(user)) {
@@ -986,6 +986,10 @@ var RegisterComponent = (function () {
             this.flashMessage.show('Please use a valid email.', { cssClass: 'alert-danger', timeout: 3000 });
             return false;
         }
+        if (!this.validateService.validatePasswordsMatch(user.password, user.passwordConfirm)) {
+            this.flashMessage.show('Passwords do not match.', { cssClass: 'alert-danger', timeout: 3000 });
+            return false;
+        }
         // Register User
         this.authService.registerUser(user).subscribe(function (data) {
             if (data.success) {
@@ -993,7 +997,7 @@ var RegisterComponent = (function () {
                 _this.router.navigate(['/login']);
             }
             else {
-                _this.flashMessage.show('Something went wrong.', { cssClass: 'alert-danger', timeout: 3000 });
+                _this.flashMessage.show(data.msg, { cssClass: 'alert-danger', timeout: 3000 });
                 _this.router.navigate(['/register']);
             }
         });
@@ -1038,7 +1042,7 @@ module.exports = module.exports.toString();
 /***/ "../../../../../src/app/components/staff-profile/staff-profile.component.html":
 /***/ (function(module, exports) {
 
-module.exports = "<p>\n  staff-profile works!\n</p>\n"
+module.exports = "<div *ngIf=\"user\">\n  <h2 class=\"page-header\">\n    {{user.name}}\n  </h2>\n  <ul class=\"list-group\">\n    <li class=\"list-group-item\">Email: {{user.email}}</li>\n    <li class=\"list-group-item\">Address: {{user.address}}</li>\n  </ul>\n  <h3 class=\"page-header\">\n    Permissions\n    <button type=\"button\" class=\"btn btn-success\" (click)=\"saveChanges()\">Save Changes</button>\n  </h3>\n  <label class=\"checkbox-inline\"><input type=\"checkbox\" [(ngModel)]=\"canMessage\">MESSAGING</label>\n  <label class=\"checkbox-inline\"><input type=\"checkbox\" [(ngModel)]=\"canBuy\">RESTOCK</label>\n  <label class=\"checkbox-inline\"><input type=\"checkbox\" value=\"\" checked  disabled>APPROVAL</label>\n</div>\n"
 
 /***/ }),
 
@@ -1048,6 +1052,11 @@ module.exports = "<p>\n  staff-profile works!\n</p>\n"
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return StaffProfileComponent; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__("../../../core/esm5/core.js");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__services_validate_service__ = __webpack_require__("../../../../../src/app/services/validate.service.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__services_auth_service__ = __webpack_require__("../../../../../src/app/services/auth.service.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_angular2_flash_messages__ = __webpack_require__("../../../../angular2-flash-messages/index.js");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_angular2_flash_messages___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3_angular2_flash_messages__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__angular_router__ = __webpack_require__("../../../router/esm5/router.js");
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -1058,10 +1067,59 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 
+
+
+
+
 var StaffProfileComponent = (function () {
-    function StaffProfileComponent() {
+    function StaffProfileComponent(validateService, flashMessage, authService, route, router) {
+        this.validateService = validateService;
+        this.flashMessage = flashMessage;
+        this.authService = authService;
+        this.route = route;
+        this.router = router;
     }
     StaffProfileComponent.prototype.ngOnInit = function () {
+        var _this = this;
+        this._id = this.route.snapshot.params.id;
+        this.canMessage = false;
+        this.canBuy = false;
+        this.authService.getUserProfile(this._id).subscribe(function (profile) {
+            if (!profile.success) {
+                _this.flashMessage.show('You are not authorized to view that.', { cssClass: 'alert-danger', timeout: 3000 });
+                _this.router.navigate(['/staff']);
+            }
+            else {
+                _this.user = profile.user;
+                if (_this.user.hasRoles.includes('canMessage')) {
+                    _this.canMessage = true;
+                }
+                if (_this.user.hasRoles.includes('canBuy')) {
+                    _this.canBuy = true;
+                }
+            }
+        }, function (err) {
+            _this.flashMessage.show('Something went wrong.', { cssClass: 'alert-danger', timeout: 3000 });
+            _this.router.navigate(['/staff']);
+        });
+    };
+    StaffProfileComponent.prototype.saveChanges = function () {
+        var _this = this;
+        var hasRoles = [];
+        if (this.canMessage) {
+            hasRoles.push('canMessage');
+        }
+        if (this.canBuy) {
+            hasRoles.push('canBuy');
+        }
+        this.authService.editPermissions(({ hasRoles: hasRoles }), this._id).subscribe(function (data) {
+            if (data.success) {
+                _this.flashMessage.show("Permissions updated successfully!", { cssClass: 'alert-success', timeout: 3000 });
+            }
+            else {
+                _this.flashMessage.show('Something went wrong. Please try again later.', { cssClass: 'alert-danger', timeout: 3000 });
+            }
+        });
     };
     StaffProfileComponent = __decorate([
         Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["Component"])({
@@ -1070,7 +1128,11 @@ var StaffProfileComponent = (function () {
             styles: [__webpack_require__("../../../../../src/app/components/staff-profile/staff-profile.component.css")],
             encapsulation: __WEBPACK_IMPORTED_MODULE_0__angular_core__["ViewEncapsulation"].None
         }),
-        __metadata("design:paramtypes", [])
+        __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_1__services_validate_service__["a" /* ValidateService */],
+            __WEBPACK_IMPORTED_MODULE_3_angular2_flash_messages__["FlashMessagesService"],
+            __WEBPACK_IMPORTED_MODULE_2__services_auth_service__["a" /* AuthService */],
+            __WEBPACK_IMPORTED_MODULE_4__angular_router__["a" /* ActivatedRoute */],
+            __WEBPACK_IMPORTED_MODULE_4__angular_router__["b" /* Router */]])
     ], StaffProfileComponent);
     return StaffProfileComponent;
 }());
@@ -1087,7 +1149,7 @@ exports = module.exports = __webpack_require__("../../../../css-loader/lib/css-b
 
 
 // module
-exports.push([module.i, ".thead-inverse th {\r\n            color: #fff;\r\n            background-color: #373a3c;\r\n        }\r\n", ""]);
+exports.push([module.i, ".thead-inverse th {\r\n  color: #fff;\r\n  background-color: #373a3c;\r\n}\r\n.table > tbody > tr > td {\r\n  vertical-align: middle;\r\n}\r\n", ""]);
 
 // exports
 
@@ -1100,7 +1162,7 @@ module.exports = module.exports.toString();
 /***/ "../../../../../src/app/components/staff/staff.component.html":
 /***/ (function(module, exports) {
 
-module.exports = "<div class=\"container\" *ngIf=\"users\">\n  <form id=\"filter\">\n    <label>Filter staff by name or email:</label>\n    <input type=\"text\" [(ngModel)]=\"term\" name=\"term\" />\n  </form>\n  <table class=\"table table-striped table-hover table-bordered table-responsive\">\n    <thead class=\"thead-inverse\">\n      <tr>\n        <th>#</th>\n        <th>Name</th>\n        <th>Email</th>\n        <th>Address</th>\n      </tr>\n    </thead>\n    <tbody>\n      <tr *ngFor=\"let user of users | filter:term\">\n        <td>{{users.indexOf(user) + 1}}</td>\n        <td>{{user.name}} <button style=\"float: right\" class=\"btn btn-info\" (click)=\"editPermissions(user)\">Edit Permissions</button></td>\n        <td>{{user.email}}</td>\n        <td>{{user.address}}</td>\n      </tr>\n    </tbody>\n  </table>\n</div>\n"
+module.exports = "<div class=\"container\" *ngIf=\"users\">\n  <form id=\"filter\">\n    <label>Filter staff by name or email:</label>\n    <input type=\"text\" [(ngModel)]=\"term\" name=\"term\" />\n  </form>\n  <table class=\"table table-striped table-hover table-bordered table-responsive\">\n    <thead class=\"thead-inverse\">\n      <tr>\n        <th>#</th>\n        <th>Name</th>\n        <th>Email</th>\n        <th>Address</th>\n        <th class=\"text-center\">Permissions</th>\n      </tr>\n    </thead>\n    <tbody>\n      <tr *ngFor=\"let user of users | filter:term\">\n        <td>{{users.indexOf(user) + 1}}</td>\n        <td>\n          {{user.name}}\n          <button style=\"float: right\" class=\"btn btn-info\" (click)=\"editPermissions(user)\">Edit Permissions</button>\n        </td>\n        <td>{{user.email}}</td>\n        <td>{{user.address}}</td>\n        <td class=\"text-center\">\n          <span *ngIf=\"user.hasRoles.includes('canMessage')\" class=\"label label-info\">MESSAGING</span>\n          <span *ngIf=\"user.hasRoles.includes('canBuy')\" class=\"label label-primary\">RESTOCK</span>\n          <span class=\"label label-success\">CUSTOMERS</span>\n        </td>\n      </tr>\n    </tbody>\n  </table>\n</div>\n"
 
 /***/ }),
 
@@ -1139,7 +1201,7 @@ var StaffComponent = (function () {
         });
     };
     StaffComponent.prototype.editPermissions = function (user) {
-        console.log("not yet implemented: " + user.hasRoles);
+        this.router.navigate(['/staff/', user._id]);
     };
     StaffComponent = __decorate([
         Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["Component"])({
@@ -1275,12 +1337,19 @@ var AuthService = (function () {
     function AuthService(http) {
         this.http = http;
     }
-    AuthService.prototype.getWithAuth = function (email) {
+    AuthService.prototype.getWithAuth = function (url) {
         var headers = new __WEBPACK_IMPORTED_MODULE_1__angular_http__["Headers"]();
         this.loadToken();
         headers.append('Authorization', this.authToken);
         headers.append('Content-Type', 'application/json');
-        return this.http.get(email, { headers: headers })
+        return this.http.get(url, { headers: headers })
+            .map(function (res) { return res.json(); });
+    };
+    AuthService.prototype.putWithAuth = function (body, url) {
+        var headers = new __WEBPACK_IMPORTED_MODULE_1__angular_http__["Headers"]();
+        headers.append('Authorization', this.authToken);
+        headers.append('Content-Type', 'application/json');
+        return this.http.put(url, body, { headers: headers })
             .map(function (res) { return res.json(); });
     };
     AuthService.prototype.registerUser = function (user) {
@@ -1290,18 +1359,13 @@ var AuthService = (function () {
             .map(function (res) { return res.json(); });
     };
     AuthService.prototype.editUserProfile = function (user, _id) {
-        var headers = new __WEBPACK_IMPORTED_MODULE_1__angular_http__["Headers"]();
-        headers.append('Authorization', this.authToken);
-        headers.append('Content-Type', 'application/json');
-        return this.http.put('users/profile/edit/' + _id, user, { headers: headers })
-            .map(function (res) { return res.json(); });
+        return this.putWithAuth(user, 'users/profile/edit/' + _id);
     };
     AuthService.prototype.toggleBuy = function (user) {
-        var headers = new __WEBPACK_IMPORTED_MODULE_1__angular_http__["Headers"]();
-        headers.append('Authorization', this.authToken);
-        headers.append('Content-Type', 'application/json');
-        return this.http.put('users/profile/' + user._id + '/toggleBuy', user, { headers: headers })
-            .map(function (res) { return res.json(); });
+        return this.putWithAuth(user, 'users/profile/' + user._id + '/toggleBuy');
+    };
+    AuthService.prototype.editPermissions = function (hasRoles, _id) {
+        return this.putWithAuth(hasRoles, 'users/profile/' + _id + '/editPermissions');
     };
     AuthService.prototype.authenticateUser = function (user) {
         var headers = new __WEBPACK_IMPORTED_MODULE_1__angular_http__["Headers"]();
@@ -1386,12 +1450,10 @@ var ValidateService = (function () {
         }
     };
     ValidateService.prototype.validateLogin = function (user) {
-        if (user.password == undefined) {
-            return false;
-        }
-        else {
-            return true;
-        }
+        return user.password != undefined;
+    };
+    ValidateService.prototype.validatePasswordsMatch = function (a, b) {
+        return a == b;
     };
     // Checks email using regex
     ValidateService.prototype.validateEmail = function (email) {

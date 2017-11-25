@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const config = require('../config/database');
+const allPermissions = ["canBuy", "canMessage"];
 
 // User Schema
 const UserSchema = mongoose.Schema({
@@ -50,24 +51,38 @@ module.exports.updateUser = function(user, callback){
 
 module.exports.toggleBuy = function (user, callback){
 
-  User.findOne({_id: user._id}, (err, user) => {
+  // if customer is new, remove new customer role
+  if(user.hasRoles.includes('newCustomer')){
+    user.hasRoles = user.hasRoles.filter(e => e !== 'newCustomer');
+  }
+
+  if(user.hasRoles.includes('notApproved')){
+    user.hasRoles = user.hasRoles.filter(e => e !== 'notApproved');
+  } else {
+    user.hasRoles.push('notApproved');
+  }
+
+  User.findByIdAndUpdate({_id: user._id}, user, (err, user) => {
     if(err) throw err;
 
-    // if customer is new, remove new customer role
-    if(user.hasRoles.includes('newCustomer')){
-      user.hasRoles = user.hasRoles.filter(e => e !== 'newCustomer');
+    User.findOne({_id: user._id}, 'name email address hasRoles', callback);
+  });
+}
+
+module.exports.editPermissions = function (user, hasRoles, callback){
+
+  for(var i in allPermissions){
+    let role = allPermissions[i];
+
+    user.hasRoles = user.hasRoles.filter(e => e !== role);
+
+    if(hasRoles.includes(role)){
+      user.hasRoles.push(role);
     }
-
-    if(user.hasRoles.includes('notApproved')){
-      user.hasRoles = user.hasRoles.filter(e => e !== 'notApproved');
-    } else {
-      user.hasRoles.push('notApproved');
-    }
-
-    User.findByIdAndUpdate({_id: user._id}, user, (err, user) => {
-
-      User.findOne({_id: user._id}, 'name email address hasRoles', callback);
-    });
+  }
+  User.findByIdAndUpdate({_id: user._id}, user, (err, user) => {
+    if(err) throw err;
+    User.findOne({_id: user._id}, 'name email address hasRoles', callback);
   });
 }
 
