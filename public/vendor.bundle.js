@@ -386,9 +386,9 @@ var JwtHelper = (function () {
         }
         for (
         // initialize result and counters
-        var bc = 0, bs = void 0, buffer = void 0, idx = 0;
+        var bc = 0, bs = void 0, buffer = void 0, idx = 0; 
         // get next character
-        buffer = str.charAt(idx++);
+        buffer = str.charAt(idx++); 
         // character found in table? initialize bit storage and add its ascii value;
         ~buffer && (bs = bc % 4 ? bs * 64 + buffer : buffer,
             // and if not first of each 4 characters,
@@ -535,7 +535,6 @@ AuthModule = AuthModule_1 = __decorate([
 exports.AuthModule = AuthModule;
 var AuthModule_1;
 //# sourceMappingURL=angular2-jwt.js.map
-
 
 /***/ }),
 
