@@ -592,7 +592,7 @@ module.exports = module.exports.toString();
 /***/ "../../../../../src/app/components/home/home.component.html":
 /***/ (function(module, exports) {
 
-module.exports = "<div class=\"jumbotron text-center\">\n        <h1>ThAmCo Account System</h1>\n        <p class=\"lead\">Placeholder welcome text.</p>\n        <div>\n        <a class=\"btn btn-primary\" [routerLink]=\"['/register']\">Register</a>\n        <a class=\"btn btn-primary\" [routerLink]=\"['/login']\">Login</a>\n      </div>\n</div>\n"
+module.exports = "<div class=\"jumbotron text-center\">\n        <h1>ThAmCo Account System</h1>\n        <p class=\"lead\">Welcome to the Three Amigos' Accounts Microservice!</p>\n        <div>\n        <a *ngIf=\"!authService.loggedIn()\" class=\"btn btn-primary\" [routerLink]=\"['/register']\">Register</a>\n        <a *ngIf=\"!authService.loggedIn()\" class=\"btn btn-primary\" [routerLink]=\"['/login']\">Login</a>\n        <a *ngIf=\"authService.loggedIn()\" class=\"btn btn-primary\" [routerLink]=\"['/profile']\">Profile</a>\n        <a *ngIf=\"authService.loggedIn()\" class=\"btn btn-primary\" (click)=\"onLogoutClick()\">Logout</a>\n      </div>\n</div>\n"
 
 /***/ }),
 
@@ -602,6 +602,9 @@ module.exports = "<div class=\"jumbotron text-center\">\n        <h1>ThAmCo Acco
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return HomeComponent; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__("../../../core/esm5/core.js");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__services_auth_service__ = __webpack_require__("../../../../../src/app/services/auth.service.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_angular2_flash_messages__ = __webpack_require__("../../../../angular2-flash-messages/index.js");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_angular2_flash_messages___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_angular2_flash_messages__);
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -612,10 +615,22 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 
+
+
 var HomeComponent = (function () {
-    function HomeComponent() {
+    function HomeComponent(authService, flashMessage) {
+        this.authService = authService;
+        this.flashMessage = flashMessage;
     }
     HomeComponent.prototype.ngOnInit = function () {
+    };
+    HomeComponent.prototype.onLogoutClick = function () {
+        this.authService.logout();
+        this.flashMessage.show('You have been successfully logged out.', {
+            cssClass: 'alert-success',
+            timeout: 3000
+        });
+        return false;
     };
     HomeComponent = __decorate([
         Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["Component"])({
@@ -624,7 +639,8 @@ var HomeComponent = (function () {
             styles: [__webpack_require__("../../../../../src/app/components/home/home.component.css")],
             encapsulation: __WEBPACK_IMPORTED_MODULE_0__angular_core__["ViewEncapsulation"].None
         }),
-        __metadata("design:paramtypes", [])
+        __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_1__services_auth_service__["a" /* AuthService */],
+            __WEBPACK_IMPORTED_MODULE_2_angular2_flash_messages__["FlashMessagesService"]])
     ], HomeComponent);
     return HomeComponent;
 }());
