@@ -1402,7 +1402,7 @@ var AuthService = (function () {
     };
     AuthService.prototype.checkRole = function (role) {
         var token = localStorage.getItem('token');
-        if (token) {
+        if (token && Object(__WEBPACK_IMPORTED_MODULE_3_angular2_jwt__["tokenNotExpired"])()) {
             var hasRoles = this.jwtHelper.decodeToken(token).payload.user.hasRoles;
             if (hasRoles.includes(role)) {
                 return true;
