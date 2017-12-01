@@ -6,8 +6,16 @@ const passport = require('passport');
 const mongoose = require('mongoose');
 const config = require('./config/database');
 
+
+var options = {
+  useMongoClient: true, // Use new connection
+  autoReconnect: true, // Always reconnect
+  reconnectTries: Number.MAX_VALUE, // Never stop trying to reconnect
+  reconnectInterval: 500, // Reconnect every 500ms
+  poolSize: 20 // Maintain up to 20 socket connections
+};
 // Connect to DB
-mongoose.connect(config.database, {useMongoClient: true});
+mongoose.connect(config.database, options);
 
 // Connected
 mongoose.connection.on('connected', () => {

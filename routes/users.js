@@ -20,15 +20,20 @@ router.post('/register', (req, res, next) => {
     if(err) throw err;
     // If user doesn't exist
     if(!user){
-      User.addUser(newUser, (err, user) =>{
-        if(err){
-          res.status(500).json({success: false, msg:'Failed to register user'});
-        } else {
-          res.status(201).json({success: true, msg:'User registered'});
-        }
-      })
+      const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+      if(!re.test(newUser.email)){
+        return res.json({success: false, msg:'Email format is incorrect.'});
+      } else {
+        User.addUser(newUser, (err, user) =>{
+          if(err){
+            return res.status(500).json({success: false, msg:'Failed to register user'});
+          } else {
+            return res.status(201).json({success: true, msg:'User registered'});
+          }
+        });
+      }
     } else {
-      res.json({success: false, msg: 'Email already in use.'});
+      return res.json({success: false, msg: 'Email already in use.'});
     }
   })
 });
@@ -56,7 +61,7 @@ router.post('/authenticate', (req, res, next) => {
             expiresIn: 1800 //30 minutes
         });
 
-      res.status(200).json({success: true, token: 'JWT ' + token});
+        return res.status(200).json({success: true, token: 'JWT ' + token});
       } else {
         return res.json({success: false, msg: 'User or password incorrect.'});
       }
@@ -67,7 +72,7 @@ router.post('/authenticate', (req, res, next) => {
 // Profile From JWT
 router.get('/profile', passport.authenticate('jwt', {session:false}), (req, res, next) => {
 
-  res.status(200).json({success: true,
+  return res.status(200).json({success: true,
     user:
       {
         _id: req.user._id,

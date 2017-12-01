@@ -1,0 +1,82 @@
+
+config:
+  environments:
+    development:
+      target: "http://localhost:4200"
+      phases:
+        - duration: 10
+          arrivalRate: 5
+        - duration: 15
+          arrivalRate: 5
+          rampTo: 7
+        - duration: 25
+          arrivalRate: 7
+          rampTo: 10
+
+    production:
+      target: "http://thamco-accounts.herokuapp.com"
+      phases:
+        - duration: 10
+          arrivalRate: 5
+        - duration: 15
+          arrivalRate: 5
+          rampTo: 7
+        - duration: 20
+          arrivalRate: 7
+          rampTo: 10
+
+  processor: "./faker-functions.js"
+
+scenarios:
+  - name: "Users arrive and register. They log in and view their profile.
+    They then change their address and are redirected back to profile."
+    flow:
+      # Users arrive to the landing page
+      - get:
+          url: "/"
+
+      # Users submit register form, it gets posted to API
+      # Call generateRandomData() to create the name, email, address and password variables
+      - function: "generateRandomData"
+      - post:
+          url: "/users/register"
+          json:
+            name: "{{ name }}"
+            email: "{{ email }}"
+            password: "{{ password }}"
+            address: "{{ address }}"
+
+      # Users submit login form, it gets posted to API
+      - post:
+          url: "/users/authenticate"
+          json:
+            email: "{{ email }}"
+            password: "{{ password }}"
+          capture:
+            json: "$.token"
+            as: "token"
+
+      # Users go to their profile
+      - get:
+          url: "/users/profile"
+          headers:
+            Authorization: "{{ token }}"
+          capture:
+            json: "$.user._id"
+            as: "id"
+
+      # Users change their address
+      # Call generateNewAddress() to create the new address variable
+      - function: "generateNewAddress"
+      - put:
+          url: "/users/profile/edit/{{ id }}"
+          headers:
+            Authorization: "{{ token }}"
+          json:
+            address: "{{ newAddress }}"
+
+      # Users redirected back to profile
+      - get:
+          url: "/users/profile"
+          headers:
+            Authorization: "{{ token }}"
