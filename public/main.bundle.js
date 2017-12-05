@@ -1248,13 +1248,21 @@ var FilterPipe = (function () {
                 return user.hasRoles.includes('newCustomer');
             });
         }
-        // Check if undefined
-        if (term === undefined) {
-            return users;
+        // If term doesn't exist, filter by term
+        if (term !== undefined) {
+            users = users.filter(function (user) {
+                return user.name.concat(user.email).toLowerCase().includes(term.toLowerCase());
+            });
         }
-        // Else return updated cleanArray
-        return users.filter(function (user) {
-            return user.name.concat(user.email).toLowerCase().includes(term.toLowerCase());
+        // Return sorted array (alphabetically by name)
+        return this.sortByKey(users, 'name');
+    };
+    // Sorts array alphabetically by key
+    FilterPipe.prototype.sortByKey = function (array, key) {
+        return array.sort(function (a, b) {
+            var x = a[key];
+            var y = b[key];
+            return ((x < y) ? -1 : ((x > y) ? 1 : 0));
         });
     };
     FilterPipe = __decorate([
