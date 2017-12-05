@@ -1,5 +1,9 @@
 const sinon = require('sinon');
+const chai = require('chai');
 const User = require('../models/user');
+const bcrypt = require('bcryptjs');
+const chaiHttp = require('chai-http');
+chai.use(chaiHttp);
 
 var sandbox = sinon.createSandbox();
 
@@ -9,6 +13,7 @@ describe('User.getUserById', () => {
 
     sandbox.stub(User, 'findById');
   });
+
   afterEach(() => {
 
     sandbox.restore();
@@ -42,6 +47,7 @@ describe('User.getUserByEmail', () => {
 
     sandbox.stub(User, 'findOne');
   });
+
   afterEach(() => {
 
     sandbox.restore();
@@ -72,10 +78,13 @@ describe('User.getUserByEmail', () => {
 describe('User.updateUser', () => {
 
   beforeEach(() => {
+
     sandbox.stub(User, 'findByIdAndUpdate');
     sandbox.stub(User, 'findOne');
   });
+
   afterEach(() => {
+
     sandbox.restore();
   });
 
@@ -139,9 +148,12 @@ describe('User.updateUser', () => {
 describe('User.toggleBuy', () => {
 
   beforeEach(() => {
+
     sandbox.stub(User, 'findByIdAndUpdate');
   });
+
   afterEach(() => {
+
     sandbox.restore();
   });
 
@@ -244,9 +256,12 @@ describe('User.toggleBuy', () => {
 describe('User.editPermissions', () => {
 
   beforeEach(() => {
+
     sandbox.stub(User, 'findByIdAndUpdate');
   });
+
   afterEach(() => {
+
     sandbox.restore();
   });
 
@@ -410,9 +425,12 @@ describe('User.editPermissions', () => {
 describe('User.getAllUsersByRole', () => {
 
   beforeEach(() => {
+
     sandbox.stub(User, 'find');
   });
+
   afterEach(() => {
+
     sandbox.restore();
   });
 
@@ -445,5 +463,130 @@ describe('User.getAllUsersByRole', () => {
     var expectedQuery = {hasRoles:{$in: ["isCustomer", "isStaff"]}};
     User.getAllUsersByRole(query);
     sandbox.assert.calledWith(User.find, expectedQuery);
+  });
+})
+
+describe('User.validateEmail', () => {
+
+  var spy;
+
+  beforeEach(() => {
+
+    spy = sinon.spy(User, 'validateEmail');
+  });
+
+  afterEach(() => {
+
+    spy.restore();
+  });
+
+  it('should call validateEmail once and return true when called with correct email', () =>{
+
+    var testEmail = "test@email.com";
+    var result = User.validateEmail(testEmail);
+    sinon.assert.calledOnce(spy);
+    chai.assert.isTrue(result, 'validateEmail is false');
+  });
+
+  it('should call validateEmail thrice and return true every time when called with correct emails', () =>{
+
+    var testEmails = ["test@email.com", "test2@email.com", "test3@email.com"];
+    var expectedResults = [];
+    for(var i in testEmails){
+      expectedResults.push(User.validateEmail(testEmails[i]));
+      chai.assert.isTrue(expectedResults[i], testEmails[i] + ' is false');
+    }
+    sinon.assert.calledThrice(spy);
+  });
+
+  it('should call validateEmail once and return false when email has no @ sign', () =>{
+
+    var testEmail = "testemail.com";
+    var result = User.validateEmail(testEmail);
+    sinon.assert.calledOnce(spy);
+    chai.assert.isFalse(result, 'validateEmail is false');
+  });
+
+  it('should call validateEmail once and return false when email has no . punctuation', () =>{
+
+    var testEmail = "test@emailcom";
+    var result = User.validateEmail(testEmail);
+    sinon.assert.calledOnce(spy);
+    chai.assert.isFalse(result, 'validateEmail is false');
+  });
+
+  it('should call validateEmail once and return false when email has no @ sign or . punctuation', () =>{
+
+    var testEmail = "testemailcom";
+    var result = User.validateEmail(testEmail);
+    sinon.assert.calledOnce(spy);
+    chai.assert.isFalse(result, 'validateEmail is false');
+  });
+
+  it('should call validateEmail once and return false when email is null', () =>{
+
+    var testEmail = null;
+    var result = User.validateEmail(testEmail);
+    sinon.assert.calledOnce(spy);
+    chai.assert.isFalse(result, 'validateEmail is false');
+  });
+
+  it('should call validateEmail once and return false when email is empty string', () =>{
+
+    var testEmail = "";
+    var result = User.validateEmail(testEmail);
+    sinon.assert.calledOnce(spy);
+    chai.assert.isFalse(result, 'validateEmail is false');
+  });
+
+  it('should call validateEmail once and return false when email is undefined', () =>{
+
+    var testEmail = undefined;
+    var result = User.validateEmail(testEmail);
+    sinon.assert.calledOnce(spy);
+    chai.assert.isFalse(result, 'validateEmail is false');
+  });
+})
+
+describe('User.addUser', () => {
+
+  var mock;
+
+  beforeEach(() => {
+
+    mock = sinon.mock(bcrypt);
+  });
+
+  afterEach(() => {
+
+    mock.verify();
+    mock.restore();
+  });
+
+  it('should call genSalt once', () =>{
+
+    var testUser = {name: "test", password: "test", _id: "test"};
+
+    mock.expects('genSalt').once();
+
+    User.addUser(testUser, ()=>{});
+  });
+
+  it('should call hash once', () =>{
+
+    var testUser = {name: "test", password: "test", _id: "test"};
+
+    mock.expects('hash').once();
+
+    User.addUser(testUser, ()=>{});
+  });
+
+  it('should pass correct password to hash', () =>{
+
+    var testUser = {name: "test", _id: "test", password: "test"};
+
+    mock.expects('hash').withArgs(testUser.password).once();
+
+    User.addUser(testUser, ()=>{});
   });
 })
