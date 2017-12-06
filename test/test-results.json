@@ -1,0 +1,113 @@
+
+> accountserv@1.0.0 test C:\mean\accountserv
+> mocha test/unit-tests.js "test/router-tests.js"
+
+
+
+  User.getUserById
+    √ should call findById exactly once
+    √ should call findById with correct id
+    √ should call findById with null query
+
+  User.getUserByEmail
+    √ should call findOne exactly once
+    √ should call findOne with correct email
+    √ should call findOne with null email
+
+  User.updateUser
+    √ should call findOne exactly once
+    √ should call findOne with correct id
+    √ should call findOne with null id
+    √ should not call findOne after throwing err
+    √ should call findByIdAndUpdate exactly once
+    √ should call findByIdAndUpdate with correct args
+    √ should call findByIdAndUpdate with undefined id
+
+  User.toggleBuy
+    √ should call findByIdAndUpdate exactly once
+    √ should call findByIdAndUpdate with correct id
+    √ should call findByIdAndUpdate with null id
+    √ should remove newCustomer from roles
+    √ should remove notApproved from roles
+    √ should add notApproved to roles
+    √ should remove notApproved and newCustomer from roles
+    √ should not change any roles, apart from newCustomer and notApproved
+    √ should remove multiple instances of newCustomer
+    √ should remove multiple instances of notApproved
+    √ should remove multiple instances of both notApproved and newCustomer
+
+  User.editPermissions
+    √ should call findByIdAndUpdate exactly once
+    √ should call findByIdAndUpdate with correct id
+    √ should call findByIdAndUpdate with null id
+    √ should not change any roles other than the modifiable ones
+    √ should add canBuy to roles
+    √ should add canMessage to roles
+    √ should add both canBuy and canMessage to roles
+    √ should remove canBuy from roles
+    √ should remove canMessage from roles
+    √ should remove both canBuy and canMessage from roles
+    √ should remove multiple instances of canBuy from roles
+    √ should remove multiple instances of canMessage from roles
+    √ should remove multiple instances of both canBuy and canMessage from roles
+    √ should not add multiple instances of canBuy to roles
+    √ should not add multiple instances of canMessage to roles
+    √ should not add multiple instances of either canBuy or canMessage to roles
+
+  User.getAllUsersByRole
+    √ should call find exactly once
+    √ should call find with correct query
+    √ should call find with null query
+    √ should call find with array
+
+  User.validateEmail
+    √ should call validateEmail once and return true when called with correct email
+    √ should call validateEmail thrice and return true every time when called with correct emails
+    √ should call validateEmail once and return false when email has no @ sign
+    √ should call validateEmail once and return false when email has no . punctuation
+    √ should call validateEmail once and return false when email has no @ sign or . punctuation
+    √ should call validateEmail once and return false when email is null
+    √ should call validateEmail once and return false when email is empty string
+    √ should call validateEmail once and return false when email is undefined
+
+  User.addUser
+    √ should call genSalt once
+    √ should call hash once
+    √ should pass correct password to hash
+
+  Mongoose connection
+    POST /users/authenticate
+      √ should respond with true and jwt (147ms)
+      √ should respond with false and error message, when given incorrect password
+      √ should respond with false and error message, when given incorrect email
+      √ should respond with false and error message, when given no password or email
+      √ should respond with false and error message, when given null body
+    GET /users/profile
+      √ should respond with true and user profile
+      √ should respond with Unauthorized when given wrong token
+      √ should respond with Unauthorized when given no token
+      √ should respond with Unauthorized when Authorization header is not set
+    GET /users/show/customers
+      √ should respond with true and customer profiles
+      √ should respond with Unauthorized when given wrong token
+      √ should respond with Unauthorized when given valid customer token
+      √ should respond with Unauthorized when given no token
+      √ should respond with Unauthorized when Authorization header is not set
+    GET /users/show/staff
+      √ should respond with true and staff profiles
+      √ should respond with Unauthorized when given wrong token
+      √ should respond with Unauthorized when given valid staff token
+      √ should respond with Unauthorized when given no token
+      √ should respond with Unauthorized when Authorization header is not set
+    GET /users/profile/:id
+      √ should respond with true and customer profile
+      √ should respond with Unauthorized when given wrong token
+      √ should respond with Unauthorized when given valid customer token
+      √ should respond with Unauthorized when staff tries to view another staff
+      √ should respond with Unauthorized when customer tries to view staff
+      √ should respond with Unauthorized when given no token
+      √ should respond with Unauthorized when Authorization header is not set
+
+
+  81 passing (831ms)
+

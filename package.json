@@ -4,7 +4,7 @@
   "description": "ThAmCo Account Service",
   "main": "app.js",
   "scripts": {
-    "test": "mocha",
+    "test": "mocha test/unit-tests.js",
     "start": "node app"
   },
   "dependencies": {

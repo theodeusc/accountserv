@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
+mongoose.Promise = global.Promise;
 const bcrypt = require('bcryptjs');
-const config = require('../config/database');
+const config = require('../config/database').get(process.env.NODE_ENV);
 const allPermissions = ["canBuy", "canMessage"];
 
 // User Schema

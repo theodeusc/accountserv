@@ -17,7 +17,7 @@ describe('User.getUserById', () => {
   afterEach(() => {
 
     sandbox.restore();
-  })
+  });
   it('should call findById exactly once', () =>{
 
     User.getUserById({ _id: 'test' }, () => { });

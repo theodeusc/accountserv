@@ -1,0 +1,7 @@
+To run all unit-tests, use "npm test"
+
+To run router-tests, first set environment using "NODE_ENV=development"(Windows) or Linux equivalent
+Then, run a node instance of the app.
+Finally, run "npm test "test/router-tests.js"" (Make sure environment is set to development in this cmd window as well)
+
+See a result of all tests at ./test-results.json

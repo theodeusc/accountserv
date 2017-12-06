@@ -4,7 +4,8 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const passport = require('passport');
 const mongoose = require('mongoose');
-const config = require('./config/database');
+mongoose.Promise = global.Promise;
+const config = require('./config/database').get(process.env.NODE_ENV);
 
 
 var options = {
